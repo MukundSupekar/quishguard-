@@ -11,8 +11,8 @@ We welcome contributions from cybersecurity researchers, students, and open-sour
 1. **Fork the Repository** on GitHub.
 2. **Clone your fork**:
    ```bash
-   git clone https://github.com/<your-username>/quishguard.git
-   cd quishguard
+   git clone https://github.com/MukundSupekar/quishguard-.git
+   cd quishguard-
    ```
 3. **Create a new feature branch**:
    ```bash

@@ -1,6 +1,6 @@
 # 🛡️ QuishGuard: QR Code Malware, Phishing & Dangerous Website Detection Platform
 
-[![QuishGuard CI](https://github.com/username/quishguard/actions/workflows/ci.yml/badge.svg)](https://github.com/username/quishguard/actions)
+[![QuishGuard CI](https://github.com/MukundSupekar/quishguard-/actions/workflows/ci.yml/badge.svg)](https://github.com/MukundSupekar/quishguard-/actions)
 [![Python Version](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Security](https://img.shields.io/badge/CyberSOC-Safe--by--Default-00e5ff.svg)](README.md)
