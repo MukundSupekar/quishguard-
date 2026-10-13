@@ -1,0 +1,378 @@
+/* QuishGuard - CyberSOC Dark Theme */
+:root {
+    --cyber-bg: #070a12;
+    --cyber-surface: #0e1424;
+    --cyber-surface-2: #141d33;
+    --cyber-border: rgba(0, 229, 255, 0.18);
+    --cyber-border-subtle: rgba(255, 255, 255, 0.08);
+    
+    --cyan: #00e5ff;
+    --cyan-glow: rgba(0, 229, 255, 0.35);
+    --green: #00ff9d;
+    --green-glow: rgba(0, 255, 157, 0.35);
+    --amber: #ffb800;
+    --amber-glow: rgba(255, 184, 0, 0.35);
+    --red: #ff3366;
+    --red-glow: rgba(255, 51, 102, 0.4);
+    --purple: #a855f7;
+    
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-sans: 'Outfit', sans-serif;
+}
+
+body.cyber-body {
+    background-color: var(--cyber-bg);
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 229, 255, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.03) 0%, transparent 40%);
+}
+
+.main-content {
+    flex: 1;
+}
+
+/* Typography */
+.font-mono {
+    font-family: var(--font-mono);
+}
+
+.text-cyan { color: var(--cyan) !important; }
+.text-green { color: var(--green) !important; }
+.text-amber { color: var(--amber) !important; }
+.text-red { color: var(--red) !important; }
+
+/* Navbar */
+.cyber-navbar {
+    background-color: rgba(14, 20, 36, 0.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--cyber-border);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+.brand-title {
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    font-size: 1.3rem;
+    color: #ffffff;
+}
+
+.brand-subtitle {
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    color: var(--cyan);
+    font-family: var(--font-mono);
+    font-weight: 600;
+}
+
+.brand-logo-glow {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: rgba(0, 229, 255, 0.1);
+    border: 1px solid var(--cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 0 14px var(--cyan-glow);
+}
+
+.cyber-nav-link {
+    color: var(--text-muted);
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.cyber-nav-link:hover, .cyber-nav-link.active {
+    color: var(--cyan);
+    background: rgba(0, 229, 255, 0.08);
+}
+
+.system-status-pill {
+    background: rgba(0, 255, 157, 0.08);
+    border: 1px solid rgba(0, 255, 157, 0.3);
+    padding: 0.35rem 0.85rem;
+    border-radius: 50px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--green);
+}
+
+.status-dot-pulse {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 1.6s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.95); opacity: 0.8; }
+    50% { transform: scale(1.3); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+/* Cards & Glassmorphism */
+.cyber-card {
+    background-color: var(--cyber-surface);
+    border: 1px solid var(--cyber-border-subtle);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.cyber-card:hover {
+    border-color: var(--cyber-border);
+}
+
+.cyber-card-header {
+    background-color: var(--cyber-surface-2);
+    border-bottom: 1px solid var(--cyber-border-subtle);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Custom Cyber Buttons */
+.cyber-btn-primary {
+    background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+    border: 1px solid var(--cyan);
+    color: #ffffff;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 12px rgba(0, 180, 216, 0.3);
+    transition: all 0.2s ease;
+}
+
+.cyber-btn-primary:hover {
+    background: linear-gradient(135deg, #00e5ff 0%, #0096c7 100%);
+    color: #050811;
+    box-shadow: 0 0 20px var(--cyan-glow);
+}
+
+.cyber-btn-danger {
+    background: linear-gradient(135deg, #e63946 0%, #b5179e 100%);
+    border: 1px solid var(--red);
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 0 12px rgba(230, 57, 70, 0.4);
+}
+
+.cyber-btn-danger:hover {
+    box-shadow: 0 0 20px var(--red-glow);
+    color: #ffffff;
+}
+
+/* Tabs */
+.cyber-tabs .nav-link {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 0.75rem 1.25rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.cyber-tabs .nav-link:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.cyber-tabs .nav-link.active {
+    color: var(--cyan);
+    background: rgba(0, 229, 255, 0.1);
+    border-color: var(--cyan);
+    box-shadow: 0 0 16px rgba(0, 229, 255, 0.2);
+}
+
+/* Upload Dropzone */
+.cyber-dropzone {
+    border: 2px dashed rgba(0, 229, 255, 0.3);
+    border-radius: 12px;
+    background: rgba(14, 20, 36, 0.6);
+    padding: 3rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.cyber-dropzone:hover, .cyber-dropzone.dragover {
+    border-color: var(--cyan);
+    background: rgba(0, 229, 255, 0.06);
+    box-shadow: 0 0 25px var(--cyan-glow);
+}
+
+/* Camera Scanner Container */
+.camera-scanner-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid var(--cyan);
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.25);
+    background: #000;
+}
+
+#camera-video, #camera-preview {
+    width: 100%;
+    height: 380px;
+    object-fit: cover;
+    display: block;
+}
+
+/* Animated Reticle & Scanline */
+.scanner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scanner-target-box {
+    width: 240px;
+    height: 240px;
+    border: 2px solid rgba(0, 229, 255, 0.7);
+    border-radius: 16px;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+}
+
+.scanner-target-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    box-shadow: 0 0 12px var(--cyan);
+    animation: scanAnimation 2.2s ease-in-out infinite;
+}
+
+@keyframes scanAnimation {
+    0% { top: 0; }
+    50% { top: 100%; }
+    100% { top: 0; }
+}
+
+/* Risk Score Gauges & Badges */
+.score-badge-safe {
+    background: rgba(0, 255, 157, 0.15);
+    color: var(--green);
+    border: 1px solid var(--green);
+    box-shadow: 0 0 12px var(--green-glow);
+}
+
+.score-badge-low {
+    background: rgba(255, 184, 0, 0.15);
+    color: var(--amber);
+    border: 1px solid var(--amber);
+}
+
+.score-badge-suspicious {
+    background: rgba(249, 115, 22, 0.15);
+    color: #f97316;
+    border: 1px solid #f97316;
+    box-shadow: 0 0 12px rgba(249, 115, 22, 0.3);
+}
+
+.score-badge-danger {
+    background: rgba(255, 51, 102, 0.15);
+    color: var(--red);
+    border: 1px solid var(--red);
+    box-shadow: 0 0 16px var(--red-glow);
+}
+
+/* SVG Radial Gauge */
+.radial-score-container {
+    position: relative;
+    width: 170px;
+    height: 170px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.radial-score-container svg {
+    transform: rotate(-90deg);
+}
+
+.radial-score-center {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.radial-score-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    line-height: 1;
+}
+
+.radial-score-max {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+/* Forensic Hop Timeline */
+.timeline-hop-card {
+    background: var(--cyber-surface-2);
+    border: 1px solid var(--cyber-border-subtle);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    margin-bottom: 0.75rem;
+    position: relative;
+}
+
+.timeline-hop-card.is-final {
+    border-color: var(--cyan);
+    box-shadow: 0 0 14px var(--cyan-glow);
+}
+
+/* Interstitial Screen */
+.interstitial-wrapper {
+    max-width: 780px;
+    margin: 2rem auto;
+    border-radius: 16px;
+    padding: 2.5rem;
+    background: #0b111e;
+    border: 2px solid var(--red);
+    box-shadow: 0 0 60px rgba(255, 51, 102, 0.3);
+}
+
+.interstitial-shield-icon {
+    font-size: 4.5rem;
+    color: var(--red);
+    text-shadow: 0 0 30px var(--red-glow);
+}
+
+/* Cyber Footer */
+.cyber-footer {
+    background-color: var(--cyber-surface);
+    border-top: 1px solid var(--cyber-border-subtle);
+}

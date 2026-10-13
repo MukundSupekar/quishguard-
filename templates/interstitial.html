@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}⚠️ Security Interstitial Warning - QuishGuard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="interstitial-wrapper text-center">
+        
+        <div class="mb-3">
+            <i class="fa-solid fa-triangle-exclamation interstitial-shield-icon"></i>
+        </div>
+
+        <h1 class="display-6 fw-bold text-white mb-2">SECURITY WARNING</h1>
+        <h4 class="text-red font-mono mb-4">POTENTIALLY DECEPTIVE OR MALICIOUS QR DESTINATION</h4>
+
+        <p class="lead text-light mb-4">
+            QuishGuard has intercepted this destination before your device could navigate to it.
+            The decoded QR payload exhibits significant indicators of 
+            <strong class="text-red">{{ scan.classification }}</strong>.
+        </p>
+
+        <!-- Threat Summary Box -->
+        <div class="p-3 mb-4 rounded bg-dark border border-danger-subtle text-start mx-auto" style="max-width: 620px;">
+            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom border-secondary-subtle">
+                <span class="text-muted small font-mono">Assigned Threat Score:</span>
+                <span class="badge bg-danger fs-6 font-mono">{{ scan.risk_score }} / 100 RISK</span>
+            </div>
+            
+            <div class="mb-2">
+                <span class="text-muted small font-mono d-block">Target Domain:</span>
+                <span class="font-mono text-cyan fw-bold">{{ scan.domain or scan.normalized_url }}</span>
+            </div>
+
+            <div class="mb-2">
+                <span class="text-muted small font-mono d-block">Detected Threat Classifications:</span>
+                <div class="d-flex flex-wrap gap-1 mt-1">
+                    {% for threat in scan.threat_types %}
+                    <span class="badge bg-danger-subtle text-danger border border-danger small font-mono">
+                        {{ threat }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div>
+                <span class="text-muted small font-mono d-block mb-1">Key Forensic Reasons:</span>
+                <ul class="text-light small mb-0 ps-3">
+                    {% for ind in scan.indicators[:4] %}
+                    <li>{{ ind.message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Action Choices -->
+        <div class="d-flex flex-column flex-sm-row justify-content-center align-items-center gap-3">
+            <a href="{{ url_for('index') }}" class="btn cyber-btn-primary btn-lg px-4">
+                <i class="fa-solid fa-shield-halved me-2"></i> Back to Safety (Recommended)
+            </a>
+            
+            <a href="{{ url_for('scan_result_page', scan_id=scan.id) }}" class="btn btn-outline-info btn-lg px-4">
+                <i class="fa-solid fa-microchip me-2"></i> View Forensic Details
+            </a>
+        </div>
+
+        <!-- Override Warning Option -->
+        <div class="mt-4 pt-3 border-top border-secondary-subtle">
+            <button class="btn btn-link text-muted small text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#overrideDetails">
+                Advanced: I understand the risks and want to bypass protection <i class="fa-solid fa-chevron-down ms-1"></i>
+            </button>
+            <div class="collapse mt-2" id="overrideDetails">
+                <div class="alert alert-danger py-2 mx-auto" style="max-width: 600px;">
+                    <small>Warning: Navigating to credential harvesting portals or malware droppers may result in account theft or device compromise.</small>
+                    <div class="mt-2">
+                        <a href="{{ scan.normalized_url or scan.raw_payload }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-danger font-mono">
+                            Proceed to Unsafe Website ({{ scan.domain }})
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

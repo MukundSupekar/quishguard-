@@ -1,0 +1,31 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "QuishGuard: Run Web Server",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/app.py",
+            "console": "integratedTerminal",
+            "jinja": true,
+            "env": {
+                "FLASK_DEBUG": "1"
+            }
+        },
+        {
+            "name": "QuishGuard: Generate Test Samples",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/generate_test_samples.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "QuishGuard: Run Unit Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "unittest",
+            "args": ["discover", "tests"],
+            "console": "integratedTerminal"
+        }
+    ]
+}

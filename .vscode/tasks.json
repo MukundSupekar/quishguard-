@@ -1,0 +1,32 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Start QuishGuard Web Server",
+            "type": "shell",
+            "command": "python app.py",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Generate Test Samples",
+            "type": "shell",
+            "command": "python generate_test_samples.py",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Automated Tests",
+            "type": "shell",
+            "command": "python -m unittest discover tests",
+            "problemMatcher": [],
+            "group": "test"
+        }
+    ]
+}

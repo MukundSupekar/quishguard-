@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+
+{% block title %}QuishGuard Forensic Analysis - {{ scan.id }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-xl-11">
+
+        <!-- Top Breadcrumb & Actions Bar -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+            <div>
+                <a href="{{ url_for('index') }}" class="text-cyan text-decoration-none small font-mono">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Return to Scanner
+                </a>
+                <h2 class="text-white fw-bold mb-0 mt-1 d-flex align-items-center gap-2 flex-wrap">
+                    <span>Scan Result:</span>
+                    <span class="font-mono text-muted fs-4">#{{ scan.id }}</span>
+                </h2>
+                <span class="text-muted small font-mono">
+                    Executed: {{ scan.timestamp }} | Source: <span class="badge bg-secondary">{{ scan.source_type|upper }}</span>
+                </span>
+            </div>
+            
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <a href="{{ url_for('api_download_report', scan_id=scan.id, format='pdf') }}" class="btn cyber-btn-primary btn-sm">
+                    <i class="fa-solid fa-file-pdf me-1"></i> Download PDF Report
+                </a>
+                <a href="{{ url_for('api_download_report', scan_id=scan.id, format='json') }}" class="btn btn-outline-info btn-sm">
+                    <i class="fa-solid fa-code me-1"></i> JSON
+                </a>
+                {% if scan.risk_score >= 40 %}
+                <a href="{{ url_for('interstitial_warning_page', scan_id=scan.id) }}" class="btn cyber-btn-danger btn-sm">
+                    <i class="fa-solid fa-shield-halved me-1"></i> Interstitial Warning
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Main Risk Assessment Banner -->
+        <div class="cyber-card mb-4 p-4">
+            <div class="row align-items-center g-4">
+                
+                <!-- Score Radial Gauge -->
+                <div class="col-md-3 text-center border-end-md border-secondary-subtle">
+                    <div class="radial-score-container mx-auto">
+                        <svg width="160" height="160" viewBox="0 0 160 160">
+                            <circle cx="80" cy="80" r="65" stroke="rgba(255,255,255,0.08)" stroke-width="12" fill="transparent" />
+                            <circle cx="80" cy="80" r="65" 
+                                stroke="{% if scan.risk_score <= 20 %}#00ff9d{% elif scan.risk_score <= 40 %}#ffb800{% elif scan.risk_score <= 60 %}#f97316{% else %}#ff3366{% endif %}" 
+                                stroke-width="12" 
+                                stroke-dasharray="408.4" 
+                                stroke-dashoffset="{{ 408.4 - (408.4 * scan.risk_score / 100) }}" 
+                                stroke-linecap="round"
+                                fill="transparent" />
+                        </svg>
+                        <div class="radial-score-center">
+                            <span class="radial-score-number {% if scan.risk_score <= 20 %}text-green{% elif scan.risk_score <= 40 %}text-amber{% else %}text-red{% endif %}">
+                                {{ scan.risk_score }}
+                            </span>
+                            <span class="radial-score-max">/ 100 RISK</span>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <span class="badge fs-6 px-3 py-2 
+                            {% if scan.risk_score <= 20 %}score-badge-safe
+                            {% elif scan.risk_score <= 40 %}score-badge-low
+                            {% elif scan.risk_score <= 60 %}score-badge-suspicious
+                            {% else %}score-badge-danger{% endif %}">
+                            {{ scan.classification }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Destination Overview & Recommendation -->
+                <div class="col-md-9">
+                    <div class="d-flex flex-column gap-2">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <span class="text-muted small text-uppercase font-mono">Analyzed Target Destination</span>
+                            <span class="badge p-2 {% if scan.recommendation == 'ALLOW' %}bg-success{% elif scan.recommendation == 'CAUTION' %}bg-warning text-dark{% else %}bg-danger{% endif %} font-mono">
+                                RECOMMENDED ACTION: {{ scan.recommendation }}
+                            </span>
+                        </div>
+                        
+                        <div class="p-3 rounded bg-black border border-secondary-subtle">
+                            <div class="text-cyan font-mono fw-bold text-break fs-5">
+                                {{ scan.normalized_url or scan.raw_payload }}
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 align-items-center mt-2">
+                            <span class="text-muted small font-mono">Identified Threat Profiles:</span>
+                            {% for threat in scan.threat_types %}
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle font-mono">
+                                <i class="fa-solid fa-triangle-exclamation me-1"></i> {{ threat }}
+                            </span>
+                            {% else %}
+                            <span class="badge bg-success-subtle text-green border border-success-subtle font-mono">
+                                <i class="fa-solid fa-circle-check me-1"></i> No Severe Threat Signatures
+                            </span>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Safe Navigation Button Bar -->
+                        <div class="mt-3 pt-3 border-top border-secondary-subtle d-flex gap-2 flex-wrap align-items-center">
+                            {% if scan.recommendation == 'ALLOW' %}
+                            <a href="{{ scan.normalized_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-success">
+                                <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Open Safe Website
+                            </a>
+                            <span class="text-muted small">Destination verified clean with minimal risk.</span>
+                            {% elif scan.recommendation == 'CAUTION' %}
+                            <a href="{{ url_for('interstitial_warning_page', scan_id=scan.id) }}" class="btn btn-sm btn-warning text-dark">
+                                <i class="fa-solid fa-shield-halved me-1"></i> View Safety Warning Before Opening
+                            </a>
+                            {% else %}
+                            <button class="btn btn-sm btn-outline-danger" disabled>
+                                <i class="fa-solid fa-ban me-1"></i> Navigation Restricted (High Risk)
+                            </button>
+                            <span class="text-red small font-mono">Safe-by-Default: Malicious URL blocked to protect your device.</span>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Two Column Detailed Forensics Grid -->
+        <div class="row g-4">
+            
+            <!-- Left Column: Forensic Indicators & Evidence -->
+            <div class="col-lg-7">
+                <div class="cyber-card mb-4">
+                    <div class="cyber-card-header">
+                        <span class="text-white fw-bold font-mono">
+                            <i class="fa-solid fa-list-check text-cyan me-2"></i> Detected Threat Indicators & Explanations
+                        </span>
+                        <span class="badge bg-secondary font-mono">{{ scan.indicators|length }} Signals</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover mb-0 align-middle">
+                                <thead>
+                                    <tr class="text-muted font-mono small border-bottom border-secondary">
+                                        <th>Category</th>
+                                        <th>Severity</th>
+                                        <th>Risk Weight</th>
+                                        <th>Forensic Explanation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for ind in scan.indicators %}
+                                    <tr>
+                                        <td class="font-mono text-cyan small">{{ ind.category }}</td>
+                                        <td>
+                                            <span class="badge 
+                                                {% if ind.severity == 'CRITICAL' %}bg-danger
+                                                {% elif ind.severity == 'HIGH' %}bg-danger-subtle text-danger border border-danger
+                                                {% elif ind.severity == 'MEDIUM' %}bg-warning-subtle text-warning border border-warning
+                                                {% else %}bg-secondary-subtle text-muted{% endif %} font-mono small">
+                                                {{ ind.severity }}
+                                            </span>
+                                        </td>
+                                        <td class="font-mono small text-muted">+{{ ind.points }}</td>
+                                        <td class="small">{{ ind.message }}</td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-4">No risk indicators detected.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Redirect Trail Visualizer -->
+                <div class="cyber-card mb-4">
+                    <div class="cyber-card-header">
+                        <span class="text-white fw-bold font-mono">
+                            <i class="fa-solid fa-route text-amber me-2"></i> Redirect Chain & Unmasking Visualizer
+                        </span>
+                        <span class="badge bg-secondary font-mono">{{ scan.redirect_chain|length }} Hops</span>
+                    </div>
+                    <div class="card-body p-3">
+                        {% for hop in scan.redirect_chain %}
+                        <div class="timeline-hop-card {% if loop.last %}is-final{% endif %}">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="badge {% if hop.status_code == 200 %}bg-success{% elif hop.status_code in [301, 302, 307, 308] %}bg-warning text-dark{% else %}bg-secondary{% endif %} font-mono">
+                                    Hop {{ hop.hop }}: HTTP {{ hop.status_code }}
+                                </span>
+                                <span class="text-muted small font-mono">{{ hop.elapsed_ms }}ms</span>
+                            </div>
+                            <div class="font-mono small text-break text-cyan">{{ hop.url }}</div>
+                            {% if hop.domain %}
+                            <div class="text-muted small font-mono mt-1">Domain: <strong>{{ hop.domain }}</strong></div>
+                            {% endif %}
+                        </div>
+                        {% else %}
+                        <div class="text-muted font-mono small">Direct destination (no redirects detected).</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Technical Attributes & Threat Intel -->
+            <div class="col-lg-5">
+                
+                <!-- Recon & Domain Attributes Card -->
+                <div class="cyber-card mb-4">
+                    <div class="cyber-card-header">
+                        <span class="text-white fw-bold font-mono">
+                            <i class="fa-solid fa-microchip text-cyan me-2"></i> Target Technical Attributes
+                        </span>
+                    </div>
+                    <div class="card-body p-3">
+                        <ul class="list-group list-group-flush bg-transparent">
+                            <li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center py-2 border-secondary-subtle">
+                                <span class="text-muted small font-mono">Registered Domain</span>
+                                <span class="font-mono text-cyan fw-bold">{{ scan.domain or 'N/A' }}</span>
+                            </li>
+                            <li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center py-2 border-secondary-subtle">
+                                <span class="text-muted small font-mono">Protocol Security</span>
+                                <span class="font-mono {% if scan.protocol == 'https' %}text-green{% else %}text-red{% endif %}">
+                                    {{ scan.protocol|upper or 'UNKNOWN' }}
+                                </span>
+                            </li>
+                            <li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center py-2 border-secondary-subtle">
+                                <span class="text-muted small font-mono">Payload Format</span>
+                                <span class="badge bg-dark border border-secondary font-mono">{{ scan.payload_type }}</span>
+                            </li>
+                            <li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center py-2 border-secondary-subtle">
+                                <span class="text-muted small font-mono">QR Engine Decoded</span>
+                                <span class="text-muted small font-mono">{{ (scan.qr_metadata or {}).get('engine', 'ZXing / OpenCV') }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Threat Intelligence Providers Card -->
+                <div class="cyber-card mb-4">
+                    <div class="cyber-card-header">
+                        <span class="text-white fw-bold font-mono">
+                            <i class="fa-solid fa-network-wired text-purple me-2"></i> Threat Intelligence Signals
+                        </span>
+                    </div>
+                    <div class="card-body p-3">
+                        {% for finding in (scan.threat_intel or {}).get('findings', []) %}
+                        <div class="p-3 mb-2 rounded bg-dark border border-secondary-subtle">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <strong class="text-white small">{{ finding.provider }}</strong>
+                                <span class="badge {% if finding.verdict == 'MALICIOUS' %}bg-danger{% elif finding.verdict == 'SUSPICIOUS' %}bg-warning text-dark{% else %}bg-success{% endif %} font-mono">
+                                    {{ finding.verdict }}
+                                </span>
+                            </div>
+                            <div class="small text-muted">{{ finding.details }}</div>
+                        </div>
+                        {% else %}
+                        <div class="text-muted small">No external intelligence alerts triggered.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Incident Response & Playbooks Card -->
+                <div class="cyber-card mb-4">
+                    <div class="cyber-card-header">
+                        <span class="text-white fw-bold font-mono">
+                            <i class="fa-solid fa-bolt text-red me-2"></i> Automated Response Playbooks
+                        </span>
+                    </div>
+                    <div class="card-body p-3">
+                        <p class="text-muted small">Execute containment countermeasures directly to block malicious domains across enterprise infrastructure.</p>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-sm btn-outline-danger playbook-action-btn" data-action="BLOCK_DOMAIN" data-domain="{{ scan.domain }}">
+                                <i class="fa-solid fa-ban me-1"></i> Add Domain to Active Enterprise Blocklist
+                            </button>
+                            <button class="btn btn-sm btn-outline-warning playbook-action-btn" data-action="CREATE_INCIDENT" data-scan-id="{{ scan.id }}">
+                                <i class="fa-solid fa-ticket me-1"></i> Generate SOC Incident Ticket
+                            </button>
+                        </div>
+                        <div id="playbook-feedback" class="mt-2 small font-mono"></div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.querySelectorAll('.playbook-action-btn').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        const action = this.dataset.action;
+        const domain = this.dataset.domain;
+        const scanId = this.dataset.scanId;
+        const feedback = document.getElementById('playbook-feedback');
+        
+        feedback.innerHTML = '<span class="text-info"><i class="fa-solid fa-spinner fa-spin me-1"></i> Executing playbook...</span>';
+        
+        try {
+            const resp = await fetch('/api/playbook/action', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: action, domain: domain, scan_id: scanId })
+            });
+            const data = await resp.json();
+            if (data.success) {
+                feedback.innerHTML = `<span class="text-green"><i class="fa-solid fa-check me-1"></i> ${data.message}</span>`;
+            } else {
+                feedback.innerHTML = `<span class="text-red"><i class="fa-solid fa-xmark me-1"></i> ${data.error || 'Execution failed'}</span>`;
+            }
+        } catch (err) {
+            feedback.innerHTML = `<span class="text-red">Execution error: ${err.message}</span>`;
+        }
+    });
+});
+</script>
+{% endblock %}

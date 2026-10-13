@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}404 - Target Not Found{% endblock %}
+
+{% block content %}
+<div class="container text-center py-5">
+    <i class="fa-solid fa-triangle-exclamation display-1 text-red mb-3"></i>
+    <h1 class="display-5 text-white font-mono">404 - FORENSIC RECORD NOT FOUND</h1>
+    <p class="text-muted lead">{{ message or "The requested scan ID or forensic asset does not exist in the database." }}</p>
+    <a href="{{ url_for('index') }}" class="btn cyber-btn-primary mt-3">
+        <i class="fa-solid fa-house me-1"></i> Return to Security Scanner
+    </a>
+</div>
+{% endblock %}
